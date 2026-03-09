@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Bot - Pair Device</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .whatsapp-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .pairing-code {
+            display: none;
+            background: #f8f9fa;
+            border: 2px dashed #667eea;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .pairing-code.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .code-display {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            letter-spacing: 8px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .instructions {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+
+        .instructions h3 {
+            color: #1976D2;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            color: #555;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="whatsapp-icon">📱</div>
+            <h1>Pair Your WhatsApp</h1>
+            <p>Fast & Secure Connection</p>
+        </div>
+
+        <div id="alert" class="alert"></div>
+
+        <form id="pairForm">
+            <div class="form-group">
+                <label for="phoneNumber">Phone Number (with country code)</label>
+                <input 
+                    type="text" 
+                    id="phoneNumber" 
+                    name="phoneNumber" 
+                    placeholder="e.g., 94741856766"
+                    required
+                />
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="pairBtn">
+                Get Pairing Code
+            </button>
+        </form>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Generating pairing code...</p>
+        </div>
+
+        <div id="pairingCode" class="pairing-code">
+            <h3>Your Pairing Code:</h3>
+            <div class="code-display" id="codeDisplay">------</div>
+            <p style="color: #666; margin-top: 10px;">Code expires in 60 seconds</p>
+            
+            <div class="instructions">
+                <h3>📝 How to Connect:</h3>
+                <ol>
+                    <li>Open WhatsApp on your phone</li>
+                    <li>Tap <strong>Menu</strong> or <strong>Settings</strong></li>
+                    <li>Tap <strong>Linked Devices</strong></li>
+                    <li>Tap <strong>Link a Device</strong></li>
+                    <li>Choose <strong>Link with Phone Number</strong></li>
+                    <li>Enter the code shown above</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Enhanced WhatsApp Bot v2.0</p>
+            <p>Powered by Baileys & Clever Cloud</p>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('pairForm');
+        const pairBtn = document.getElementById('pairBtn');
+        const loading = document.getElementById('loading');
+        const pairingCodeDiv = document.getElementById('pairingCode');
+        const codeDisplay = document.getElementById('codeDisplay');
+        const alert = document.getElementById('alert');
+
+        function showAlert(message, type = 'success') {
+            alert.textContent = message;
+            alert.className = `alert alert-${type} show`;
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+
+            if (!phoneNumber) {
+                showAlert('Please enter a phone number', 'error');
+                return;
+            }
+
+            // Validate phone number
+            const cleanNumber = phoneNumber.replace(/[^0-9]/g, '');
+            if (cleanNumber.length < 10 || cleanNumber.length > 15) {
+                showAlert('Invalid phone number format', 'error');
+                return;
+            }
+
+            try {
+                pairBtn.disabled = true;
+                loading.classList.add('show');
+                pairingCodeDiv.classList.remove('show');
+
+                const response = await fetch('/api/pair/code', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ phoneNumber: cleanNumber })
+                });
+
+                const data = await response.json();
+
+                loading.classList.remove('show');
+
+                if (data.success && data.pairingCode) {
+                    codeDisplay.textContent = data.pairingCode;
+                    pairingCodeDiv.classList.add('show');
+                    showAlert('Pairing code generated successfully!', 'success');
+
+                    // Start checking for connection status
+                    checkPairingStatus(data.sessionId);
+                } else {
+                    showAlert(data.message || 'Failed to generate pairing code', 'error');
+                    pairBtn.disabled = false;
+                }
+
+            } catch (error) {
+                loading.classList.remove('show');
+                showAlert('Network error: ' + error.message, 'error');
+                pairBtn.disabled = false;
+            }
+        });
+
+        async function checkPairingStatus(sessionId) {
+            let attempts = 0;
+            const maxAttempts = 60; // Check for 1 minute
+
+            const interval = setInterval(async () => {
+                attempts++;
+
+                try {
+                    const response = await fetch(`/api/pair/status/${sessionId}`);
+                    const data = await response.json();
+
+                    if (data.success && data.paired) {
+                        clearInterval(interval);
+                        showAlert('✓ Successfully paired! You can now use the bot.', 'success');
+                        
+                        // Redirect to main page after 2 seconds
+                        setTimeout(() => {
+                            window.location.href = '/';
+                        }, 2000);
+                    }
+
+                    if (attempts >= maxAttempts) {
+                        clearInterval(interval);
+                        showAlert('Pairing timeout. Please try again.', 'error');
+                        pairBtn.disabled = false;
+                    }
+
+                } catch (error) {
+                    console.error('Status check error:', error);
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

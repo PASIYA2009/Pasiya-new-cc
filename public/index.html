@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Bot - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-icon {
+            font-size: 30px;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .status-online {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .features {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .features h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .feature-item:hover {
+            background: #e9ecef;
+        }
+
+        .feature-icon {
+            font-size: 24px;
+        }
+
+        .feature-text {
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: white;
+            font-size: 14px;
+        }
+
+        .api-docs {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .api-docs h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .endpoint {
+            background: #f8f9fa;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            border-left: 4px solid #667eea;
+        }
+
+        .method {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .method-get {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .method-post {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .method-delete {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 WhatsApp Bot Dashboard</h1>
+            <p>Clever Cloud Optimized | Version 2.0.0</p>
+        </div>
+
+        <div class="cards">
+            <div class="card">
+                <h2>
+                    <span class="card-icon">📱</span>
+                    Quick Start
+                </h2>
+                <p>Connect your WhatsApp in seconds with our fast pairing system.</p>
+                <a href="/pair" class="btn">Pair Device</a>
+                <div class="status-badge status-offline" id="botStatus">Offline</div>
+            </div>
+
+            <div class="card">
+                <h2>
+                    <span class="card-icon">📊</span>
+                    Bot Control
+                </h2>
+                <p>Manage your bot instances and monitor their status.</p>
+                <button class="btn" onclick="checkStatus()">Check Status</button>
+                <div id="instanceCount" style="margin-top: 10px; color: #666; font-size: 14px;">
+                    Loading...
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>
+                    <span class="card-icon">🔧</span>
+                    API Access
+                </h2>
+                <p>Integrate with WhatsApp Business API for advanced features.</p>
+                <a href="#api-docs" class="btn btn-secondary">View Docs</a>
+            </div>
+        </div>
+
+        <div class="features">
+            <h2>✨ Features</h2>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <span class="feature-icon">⚡</span>
+                    <span class="feature-text">Fast Pairing (30-60 seconds)</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🔒</span>
+                    <span class="feature-text">Secure Session Management</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📲</span>
+                    <span class="feature-text">Multi-Device Support</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">💼</span>
+                    <span class="feature-text">Business API Ready</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🔄</span>
+                    <span class="feature-text">Auto-Reconnect</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📝</span>
+                    <span class="feature-text">Message Logging</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🚀</span>
+                    <span class="feature-text">Clever Cloud Optimized</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🛡️</span>
+                    <span class="feature-text">Rate Limiting</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="api-docs" id="api-docs">
+            <h3>📚 API Documentation</h3>
+            <p style="color: #666; margin-bottom: 20px;">RESTful API endpoints for bot integration</p>
+
+            <h4 style="color: #333; margin-top: 20px; margin-bottom: 10px;">Pairing Endpoints</h4>
+            <div class="endpoint">
+                <span class="method method-post">POST</span>
+                /api/pair/code - Generate pairing code
+            </div>
+            <div class="endpoint">
+                <span class="method method-get">GET</span>
+                /api/pair/status/:sessionId - Check pairing status
+            </div>
+            <div class="endpoint">
+                <span class="method method-get">GET</span>
+                /api/pair/sessions - List all sessions
+            </div>
+            <div class="endpoint">
+                <span class="method method-delete">DELETE</span>
+                /api/pair/session/:sessionId - Remove session
+            </div>
+
+            <h4 style="color: #333; margin-top: 20px; margin-bottom: 10px;">Bot Endpoints</h4>
+            <div class="endpoint">
+                <span class="method method-post">POST</span>
+                /api/bot/start - Start bot instance
+            </div>
+            <div class="endpoint">
+                <span class="method method-post">POST</span>
+                /api/bot/stop - Stop bot instance
+            </div>
+            <div class="endpoint">
+                <span class="method method-get">GET</span>
+                /api/bot/status - Get bot status
+            </div>
+            <div class="endpoint">
+                <span class="method method-post">POST</span>
+                /api/bot/send - Send message
+            </div>
+
+            <h4 style="color: #333; margin-top: 20px; margin-bottom: 10px;">Health Endpoints</h4>
+            <div class="endpoint">
+                <span class="method method-get">GET</span>
+                /health - Health check
+            </div>
+            <div class="endpoint">
+                <span class="method method-get">GET</span>
+                /health/ready - Readiness probe
+            </div>
+            <div class="endpoint">
+                <span class="method method-get">GET</span>
+                /health/live - Liveness probe
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 WhatsApp Bot - Enhanced Edition</p>
+            <p>Powered by Baileys & Clever Cloud | Built with ❤️</p>
+        </div>
+    </div>
+
+    <script>
+        async function checkStatus() {
+            try {
+                const response = await fetch('/api/bot/status');
+                const data = await response.json();
+
+                const instanceCount = document.getElementById('instanceCount');
+                const botStatus = document.getElementById('botStatus');
+
+                if (data.success) {
+                    instanceCount.textContent = `Active Instances: ${data.count}`;
+                    
+                    if (data.count > 0) {
+                        botStatus.textContent = 'Online';
+                        botStatus.className = 'status-badge status-online';
+                    } else {
+                        botStatus.textContent = 'Offline';
+                        botStatus.className = 'status-badge status-offline';
+                    }
+                }
+            } catch (error) {
+                console.error('Status check failed:', error);
+                document.getElementById('instanceCount').textContent = 'Error checking status';
+            }
+        }
+
+        // Check status on load
+        checkStatus();
+
+        // Auto-refresh status every 10 seconds
+        setInterval(checkStatus, 10000);
+    </script>
+</body>
+</html>
